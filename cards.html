@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Magia - Warhammer: The Old World</title>
+    <style>
+        @media print {
+            .page-break { page-break-after: always; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            padding: 20px;
+            color: #333;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #c9a227;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        h2.lore-title {
+            text-align: center;
+            color: #fff;
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+            padding: 15px;
+            border-top: 3px solid;
+            border-bottom: 3px solid;
+        }
+        
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .spell-card {
+            width: 300px;
+            min-height: 450px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border: 3px solid;
+        }
+        
+        /* Colori per ogni Lore */
+        .battle-magic { border-color: #8B0000; }
+        .battle-magic .card-header { background: linear-gradient(135deg, #8B0000, #cc0000); }
+        .battle-magic .lore-tag { background: #8B0000; }
+        
+        .daemonology { border-color: #4a0080; }
+        .daemonology .card-header { background: linear-gradient(135deg, #4a0080, #7b00cc); }
+        .daemonology .lore-tag { background: #4a0080; }
+        
+        .dark-magic { border-color: #1a1a1a; }
+        .dark-magic .card-header { background: linear-gradient(135deg, #1a1a1a, #444); }
+        .dark-magic .lore-tag { background: #1a1a1a; }
+        
+        .elementalism { border-color: #0066cc; }
+        .elementalism .card-header { background: linear-gradient(135deg, #0066cc, #0099ff); }
+        .elementalism .lore-tag { background: #0066cc; }
+        
+        .high-magic { border-color: #c9a227; }
+        .high-magic .card-header { background: linear-gradient(135deg, #c9a227, #f0d060); }
+        .high-magic .lore-tag { background: #c9a227; }
+        
+        .illusion { border-color: #6b5b95; }
+        .illusion .card-header { background: linear-gradient(135deg, #6b5b95, #9b8bc0); }
+        .illusion .lore-tag { background: #6b5b95; }
+        
+        .necromancy { border-color: #2d4a22; }
+        .necromancy .card-header { background: linear-gradient(135deg, #2d4a22, #4a7a35); }
+        .necromancy .lore-tag { background: #2d4a22; }
+        
+        .waaagh-magic { border-color: #228B22; }
+        .waaagh-magic .card-header { background: linear-gradient(135deg, #228B22, #32CD32); }
+        .waaagh-magic .lore-tag { background: #228B22; }
+        
+        .card-header {
+            padding: 12px 15px;
+            color: white;
+            text-align: center;
+        }
+        
+        .spell-number {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            line-height: 32px;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        
+        .spell-number.signature {
+            width: auto;
+            padding: 0 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        
+        .spell-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .image-slot {
+            width: 100%;
+            height: 100px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-style: italic;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .card-body {
+            padding: 12px 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .spell-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .stat-box {
+            background: #f5f5f5;
+            padding: 6px 10px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .stat-label {
+            font-size: 0.7em;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .stat-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .lore-tag {
+            display: inline-block;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .spell-type {
+            display: inline-block;
+            background: #333;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            margin-left: 5px;
+        }
+        
+        .spell-description {
+            font-size: 0.85em;
+            line-height: 1.4;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .spell-effect {
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #333;
+            flex-grow: 1;
+        }
+        
+        .spell-effect strong {
+            color: #000;
+        }
+        
+        .special-rules {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        .intro-text {
+            max-width: 900px;
+            margin: 0 auto 30px auto;
+            color: #ccc;
+            text-align: center;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚔️ CARTE MAGIA ⚔️</h1>
+    <h1 style="font-size: 1.5em; margin-bottom: 30px;">Warhammer: The Old World</h1>
+    
+    <p class="intro-text">
+        Stampa e ritaglia queste carte per un facile riferimento durante le partite.<br>
+        Ogni Lore contiene 7 incantesimi: 6 numerati (1-6) e 1 Signature Spell (★).
+    </p>
+
+    <!-- ==================== BATTLE MAGIC ==================== -->
+    <h2 class="lore-title" style="border-color: #8B0000; color: #ff4444;">🔥 BATTLE MAGIC 🔥</h2>
+    
+    <div class="cards-container">
+        <!-- Signature Spell -->
+        <div class="spell-card battle-magic">
+            <div class="card-header">
+                <div class="spell-number signature">★ SIGNATURE</div>
+                <div class="spell-name">Hammerhand</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Battle Magic</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">7+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    As the Battle Mage chants an invocation, their fists become like hammers, falling upon their foes with great and terrible power.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> A single enemy unit the caster is engaged in combat with suffers <strong>2D3 Strength 4 hits</strong>, each with an AP of <strong>-2</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 1 -->
+        <div class="spell-card battle-magic">
+            <div class="card-header">
+                <div class="spell-number">1</div>
+                <div class="spell-name">Fireball</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Battle Magic</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">24"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    With a snap of the fingers, the Battle Mage summons forth a roiling ball of magical flame and hurls it at a nearby foe.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> The target enemy unit suffers <strong>2D6 Strength 4 hits</strong>, each with an AP of <strong>-</strong>.
+                    <div class="special-rules">⚡ Flaming Attacks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 2 -->
+        <div class="spell-card battle-magic">
+            <div class="card-header">
+                <div class="spell-number">2</div>
+                <div class="spell-name">Curse of Arrow Attraction</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Battle Magic</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">7+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">21"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    With a cry and a flourish, the Battle Mage curses an enemy, causing missiles to seek them out with almost sentient awareness.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until your next Start of Turn sub-phase, you may <strong>re-roll any rolls To Hit of a natural 1</strong> when shooting at the target enemy unit.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 3 -->
+        <div class="spell-card battle-magic">
+            <div class="card-header">
+                <div class="spell-number">3</div>
+                <div class="spell-name">Pillar of Fire</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Battle Magic</span>
+                    <span class="spell-type">Magical Vortex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Battle Mage conjures a fireball which quickly grows to become a towering pillar. Loosed from their grasp, it advances towards the enemy.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Place a small (3") blast template within 12". Treated as dangerous terrain. Moves D6" in a direction of your choosing each Start of Turn. Units touched suffer <strong>D3+3 S3 hits, AP -2</strong>.
+                    <div class="special-rules">⚡ Flaming Attacks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 4 -->
+        <div class="spell-card battle-magic">
+            <div class="card-header">
+                <div class="spell-number">4</div>
+                <div class="spell-name">Arcane Urgency</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Battle Magic</span>
+                    <span class="spell-type">Conveyance</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    As the Battle Mage's allies march, time around them slows, allowing them to cover great distance in the blink of an eye.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> If the target friendly unit is not fleeing and has <strong>already moved</strong> during this Movement phase, it may <strong>immediately move again</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 5 -->
+        <div class="spell-card battle-magic">
+            <div class="card-header">
+                <div class="spell-number">5</div>
+                <div class="spell-name">Oaken Shield</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Battle Magic</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">7+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Self</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Battle Mage summons a mighty spectral oak around themselves and their allies, protecting them from the weapons of their enemies.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until your next Start of Turn sub-phase, the caster and any unit they have joined gain a <strong>5+ Ward save</strong> against any wounds suffered.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 6 -->
+        <div class="spell-card battle-magic">
+            <div class="card-header">
+                <div class="spell-number">6</div>
+                <div class="spell-name">Curse of Cowardly Flight</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Battle Magic</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    As the war drums beat, the Battle Mage reaches into the minds of the enemy, tapping into their fears and weakening their intestinal fortitude.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> The target enemy unit must immediately make a <strong>Panic test</strong>. If the unit auto-passes Panic tests, it must still test and will <strong>Give Ground</strong> if failed.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== DAEMONOLOGY ==================== -->
+    <h2 class="lore-title" style="border-color: #4a0080; color: #b366ff;">👹 DAEMONOLOGY 👹</h2>
+    
+    <div class="cards-container">
+        <!-- Signature Spell -->
+        <div class="spell-card daemonology">
+            <div class="card-header">
+                <div class="spell-number signature">★ SIGNATURE</div>
+                <div class="spell-name">The Summoning</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Daemonology</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">18"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    From the Realm of Chaos, the Daemonologist summons forth daemonic beasts to strike at their foes.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> The target enemy unit suffers <strong>2D6 Strength 4 hits</strong>, each with an AP of <strong>-1</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 1 -->
+        <div class="spell-card daemonology">
+            <div class="card-header">
+                <div class="spell-number">1</div>
+                <div class="spell-name">Steed of Shadows</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Daemonology</span>
+                    <span class="spell-type">Conveyance</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Coal-black daemonic steeds materialise from the air, bearing warriors aloft on wings of shadow.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Target friendly unit (infantry only). If not fleeing and hasn't moved, gains <strong>Fly (12)</strong> until your next Start of Turn sub-phase.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 2 -->
+        <div class="spell-card daemonology">
+            <div class="card-header">
+                <div class="spell-number">2</div>
+                <div class="spell-name">Gathering Darkness</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Daemonology</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    At the Daemonologist's command, strange forms gather about the foe, their whispered taunts draining the enemy's courage.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn: target suffers <strong>-2 Initiative</strong> (min 1), <strong>-2 Leadership</strong> (min 2), and <strong>cannot use Inspiring Presence</strong>. May target units in combat.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 3 -->
+        <div class="spell-card daemonology">
+            <div class="card-header">
+                <div class="spell-number">3</div>
+                <div class="spell-name">Daemonic Familiars</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Daemonology</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Daemonologist's many familiars fall upon the foe, slashing and biting with incorporeal claws and teeth.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> A single enemy unit the caster is engaged with suffers <strong>2D6 Strength 2 hits</strong>, with <strong>no armour save permitted</strong> (Ward and Regeneration allowed).
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 4 -->
+        <div class="spell-card daemonology">
+            <div class="card-header">
+                <div class="spell-number">4</div>
+                <div class="spell-name">Daemonic Vessel</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Daemonology</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Self</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    At the Daemonologist's bidding, otherworldly entities rush forth to take possession of their allies, filling their bodies with unnatural ferocity.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until end of turn, caster, mount and joined unit gain <strong>+1 Strength</strong>, <strong>+1 Attacks</strong> (max 10), and <strong>+1 AP</strong> on weapons.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 5 -->
+        <div class="spell-card daemonology">
+            <div class="card-header">
+                <div class="spell-number">5</div>
+                <div class="spell-name">Vortex of Chaos</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Daemonology</span>
+                    <span class="spell-type">Magical Vortex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    A swirling tear in reality opens, through which daemonic beasts grasp at those that venture too close.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Place small (3") template within 15". Dangerous terrain. Moves D6" random each Start of Turn. Units touched suffer <strong>D6+1 S3 hits, AP -</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 6 -->
+        <div class="spell-card daemonology">
+            <div class="card-header">
+                <div class="spell-number">6</div>
+                <div class="spell-name">Daemonic Vigour</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Daemonology</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    As the Daemonologist mutters verses aloud from a proscribed text, their allies fill with a daemonic vitality.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until end of turn, target friendly unit gains <strong>+1 Movement</strong>, <strong>+1 Toughness</strong>, <strong>+1 Initiative</strong> (max 10).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== DARK MAGIC ==================== -->
+    <h2 class="lore-title" style="border-color: #1a1a1a; color: #888;">🌑 DARK MAGIC 🌑</h2>
+    
+    <div class="cards-container">
+        <!-- Signature Spell -->
+        <div class="spell-card dark-magic">
+            <div class="card-header">
+                <div class="spell-number signature">★ SIGNATURE</div>
+                <div class="spell-name">Doombolt</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Dark Magic</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">24"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    At the Dark Mage's bidding, a bolt of black lightning tears from the heavens and stabs at the earth.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Place small (3") template over target. Models under template risk being hit and suffer a single <strong>Strength 3 hit, AP -2</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 1 -->
+        <div class="spell-card dark-magic">
+            <div class="card-header">
+                <div class="spell-number">1</div>
+                <div class="spell-name">Word of Pain</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Dark Magic</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">18"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Dark Mage chants incomprehensible syllables, each more torturous than the last.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, target suffers <strong>-1 Strength</strong> and <strong>-1 Toughness</strong> (min 1). May target units in combat.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 2 -->
+        <div class="spell-card dark-magic">
+            <div class="card-header">
+                <div class="spell-number">2</div>
+                <div class="spell-name">Stream of Corruption</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Dark Magic</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    From the fingertips of the Dark Mage corrupted magic flows, flaying the flesh of the enemy.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Place flame template from caster's base over engaged unit. Models (friend or foe) under template risk being hit and suffer a single <strong>S3 hit, AP -1</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 3 -->
+        <div class="spell-card dark-magic">
+            <div class="card-header">
+                <div class="spell-number">3</div>
+                <div class="spell-name">Infernal Gateway</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Dark Magic</span>
+                    <span class="spell-type">Conveyance</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Dark Mage reveals a hidden passageway through the Realm of Chaos.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Target friendly character (may be in combat). If not fleeing, remove and replace within <strong>12" of original position</strong>, not within 6" of enemies. <em>Allows leaving combat!</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 4 -->
+        <div class="spell-card dark-magic">
+            <div class="card-header">
+                <div class="spell-number">4</div>
+                <div class="spell-name">Phantasmagoria</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Dark Magic</span>
+                    <span class="spell-type">Magical Vortex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Dark visions beset the enemy ranks, driving warriors into blind panic or suicidal rage.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Place 3" template (doesn't move). Dangerous terrain. Enemies within 12" must take <strong>Panic test</strong>: fail = Fall Back/Flee away; pass = gain <strong>Impetuous</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 5 -->
+        <div class="spell-card dark-magic">
+            <div class="card-header">
+                <div class="spell-number">5</div>
+                <div class="spell-name">Battle Lust</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Dark Magic</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Rage builds within those near to the Dark Mage, filling them with a terrible lust for bloodshed.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until end of turn, target friendly unit gains <strong>Frenzy</strong> and <strong>Hatred (all enemies)</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 6 -->
+        <div class="spell-card dark-magic">
+            <div class="card-header">
+                <div class="spell-number">6</div>
+                <div class="spell-name">Soul Eater</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Dark Magic</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">7+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Dark Mage reaches out a taloned hand to tear at the very soul of their enemy.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> A single enemy <strong>model</strong> suffers 1 Strength 3 hit with <strong>Multiple Wounds (3)</strong> and <strong>no armour save</strong> (Ward/Regen allowed).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== ELEMENTALISM ==================== -->
+    <h2 class="lore-title" style="border-color: #0066cc; color: #66b3ff;">🌊 ELEMENTALISM 🌊</h2>
+    
+    <div class="cards-container">
+        <!-- Signature Spell -->
+        <div class="spell-card elementalism">
+            <div class="card-header">
+                <div class="spell-number signature">★ SIGNATURE</div>
+                <div class="spell-name">Storm Call</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Elementalism</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">7+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Elementalist channels the fury of a storm towards their foes, causing strong winds and icy rains to batter against them.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, target suffers <strong>-1 Movement</strong> and <strong>-1 Initiative</strong> (min 1). Replaces previous Hex on target.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 1 -->
+        <div class="spell-card elementalism">
+            <div class="card-header">
+                <div class="spell-number">1</div>
+                <div class="spell-name">Flaming Sword</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Elementalism</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    With a simple gesture, the Elementalist summons a great, flaming sword with which to strike at their enemies.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> A single enemy unit engaged suffers <strong>D6+1 Strength 3 hits</strong>, AP -.
+                    <div class="special-rules">⚡ Flaming Attacks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 2 -->
+        <div class="spell-card elementalism">
+            <div class="card-header">
+                <div class="spell-number">2</div>
+                <div class="spell-name">Plague of Rust</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Elementalism</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">21"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    As the Elementalist utters a curse, the armour of the enemy loses its lustre, corroding and crumbling from their bodies.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, target suffers <strong>-2 to armour value</strong>. May target units in combat.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 3 -->
+        <div class="spell-card elementalism">
+            <div class="card-header">
+                <div class="spell-number">3</div>
+                <div class="spell-name">Summon Elemental Spirit</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Elementalism</span>
+                    <span class="spell-type">Magical Vortex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Elementalist summons forth a powerful spirit of earth, wind, water or fire to do their bidding.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Place 3" template. Dangerous terrain, blocks LoS. Moves D6" random each turn. Enemy units touched suffer <strong>D3+3 S4 hits, AP -1</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 4 -->
+        <div class="spell-card elementalism">
+            <div class="card-header">
+                <div class="spell-number">4</div>
+                <div class="spell-name">Earthen Ramparts</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Elementalism</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    At the Elementalist's summoning, mighty earthen ramparts rise up about their allies.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, target gains <strong>5+ Ward</strong> and counts as <strong>behind defended obstacle if charged</strong>. However, unit <strong>cannot march or charge</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 5 -->
+        <div class="spell-card elementalism">
+            <div class="card-header">
+                <div class="spell-number">5</div>
+                <div class="spell-name">Wind Blast</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Elementalism</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    A mighty wind rips enemy warriors from their regiments, dashing them against the hard earth.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Target suffers <strong>D3+3 Strength 5 hits</strong>, AP -1. After resolving, the unit must <strong>Give Ground</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 6 -->
+        <div class="spell-card elementalism">
+            <div class="card-header">
+                <div class="spell-number">6</div>
+                <div class="spell-name">Travel Mystical Pathway</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Elementalism</span>
+                    <span class="spell-type">Conveyance</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">9"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Tapping into the power of the Geomantic Web, the Elementalist opens a portal through which their allies can travel.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> If target friendly unit hasn't moved and isn't fleeing, remove and replace within <strong>12" of original position</strong>, not within 6" of enemies.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== HIGH MAGIC ==================== -->
+    <h2 class="lore-title" style="border-color: #c9a227; color: #f0d060;">✨ HIGH MAGIC ✨</h2>
+    
+    <div class="cards-container">
+        <!-- Signature Spell -->
+        <div class="spell-card high-magic">
+            <div class="card-header">
+                <div class="spell-number signature">★ SIGNATURE</div>
+                <div class="spell-name">Drain Magic</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">High Magic</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Self</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    As the High Mage draws the Winds of Magic to themselves, other Wizards find themselves struggling to access their powers.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Enemy Wizards within <strong>24"</strong> of caster must <strong>increase casting value by +2</strong> when casting spells.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 1 -->
+        <div class="spell-card high-magic">
+            <div class="card-header">
+                <div class="spell-number">1</div>
+                <div class="spell-name">Walk Between Worlds</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">High Magic</span>
+                    <span class="spell-type">Conveyance</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Self</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The High Mage causes their allies to drift in and out of reality, enabling them to pass through terrain as if it was not there.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, caster and joined unit gain <strong>Ethereal</strong> and <strong>Reserve Move</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 2 -->
+        <div class="spell-card high-magic">
+            <div class="card-header">
+                <div class="spell-number">2</div>
+                <div class="spell-name">Fiery Convocation</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">High Magic</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">18"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    At the High Mage's bidding, a roiling storm of fire erupts within the midst of the enemy line.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Place large (5") template on target, scatters D3+1". Models hit suffer <strong>S4 hit, AP -2</strong>.
+                    <div class="special-rules">⚡ Flaming Attacks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 3 -->
+        <div class="spell-card high-magic">
+            <div class="card-header">
+                <div class="spell-number">3</div>
+                <div class="spell-name">Tempest</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">High Magic</span>
+                    <span class="spell-type">Magical Vortex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The High Mage summons forth a tempest of rain and sleet, the centre of which is all but impenetrable.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Place 3" template (doesn't move). Dangerous terrain. Enemies within 6": open ground = difficult; difficult = dangerous.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 4 -->
+        <div class="spell-card high-magic">
+            <div class="card-header">
+                <div class="spell-number">4</div>
+                <div class="spell-name">Corporeal Unmaking</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">High Magic</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The physical forms of the High Mage's enemies begin to unravel, turning to dust on the wind.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Engaged enemy unit suffers <strong>D3 Strength 5 hits</strong>, with <strong>no armour or Regeneration saves</strong> (Ward allowed).
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 5 -->
+        <div class="spell-card high-magic">
+            <div class="card-header">
+                <div class="spell-number">5</div>
+                <div class="spell-name">Fury of Khaine</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">High Magic</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The High Mage beseeches Khaine, God of Murder, to bestow his fury on the High Mage's allies.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until end of turn, target gains <strong>Extra Attacks (+1)</strong>. May target units in combat.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 6 -->
+        <div class="spell-card high-magic">
+            <div class="card-header">
+                <div class="spell-number">6</div>
+                <div class="spell-name">Shield of Saphery</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">High Magic</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">18"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    White light bursts forth from the High Mage's outstretched hands, clinging to armour and arcing overhead to form a protective barrier.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until end of turn, target gains <strong>5+ Ward</strong>. Replaces any previous Enchantment on target.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== ILLUSION ==================== -->
+    <h2 class="lore-title" style="border-color: #6b5b95; color: #b8a9c9;">🎭 ILLUSION 🎭</h2>
+    
+    <div class="cards-container">
+        <!-- Signature Spell -->
+        <div class="spell-card illusion">
+            <div class="card-header">
+                <div class="spell-number signature">★ SIGNATURE</div>
+                <div class="spell-name">Glittering Robe</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Illusion</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Self</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Shimmering light radiates from the Illusionist's garb, dazzling and confounding the enemy.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, enemies suffer <strong>-1 To Hit</strong> against caster and joined unit. Replaces previous Enchantments.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 1 -->
+        <div class="spell-card illusion">
+            <div class="card-header">
+                <div class="spell-number">1</div>
+                <div class="spell-name">Mind Razor</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Illusion</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">7+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Torturous illusion grips the enemy. Only those with the strongest of wills can resist.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Target takes <strong>Leadership test</strong>.<br>
+                    • Pass: <strong>D3 S3 hits, AP -</strong><br>
+                    • Fail: <strong>D3+3 S4 hits, AP -3</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 2 -->
+        <div class="spell-card illusion">
+            <div class="card-header">
+                <div class="spell-number">2</div>
+                <div class="spell-name">Shimmering Dragon</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Illusion</span>
+                    <span class="spell-type">Conveyance</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    An incorporeal Dragon materialises over the battlefield, stooping low to bear aloft a mighty champion.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Target friendly character only. If not fleeing and hasn't moved, gains <strong>Fly (10)</strong> until end of turn.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 3 -->
+        <div class="spell-card illusion">
+            <div class="card-header">
+                <div class="spell-number">3</div>
+                <div class="spell-name">Column of Crystal</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Illusion</span>
+                    <span class="spell-type">Magical Vortex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">9"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Illusionist conjures forth an illusory column of crystal. All that see it believe it to be utterly impenetrable.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Place large (5") template within 9". Doesn't move. Treated as <strong>impassable terrain</strong>, blocks LoS.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 4 -->
+        <div class="spell-card illusion">
+            <div class="card-header">
+                <div class="spell-number">4</div>
+                <div class="spell-name">Confounding Convocation</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Illusion</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">9"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The enemy is bombarded by wild and disorienting images and dancing lights that render them all but blind.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Target becomes subject to <strong>Stupidity</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 5 -->
+        <div class="spell-card illusion">
+            <div class="card-header">
+                <div class="spell-number">5</div>
+                <div class="spell-name">Spectral Doppelganger</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Illusion</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Like the surface of a mirror struck a mighty blow, the Illusionist's image fractures, revealing myriad doppelganger likenesses.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Engaged enemy suffers <strong>2D6 hits</strong>, resolved using <strong>caster's characteristics</strong> and weapon rules.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 6 -->
+        <div class="spell-card illusion">
+            <div class="card-header">
+                <div class="spell-number">6</div>
+                <div class="spell-name">Miasmic Mirage</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Illusion</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">11+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Around the feet of the enemy, the earth itself shifts and blurs, causing warriors to trip and stumble.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, target suffers <strong>-2 Movement</strong> (min 1) and <strong>cannot march or charge</strong>. Replaces previous Hex.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== NECROMANCY ==================== -->
+    <h2 class="lore-title" style="border-color: #2d4a22; color: #6fba50;">💀 NECROMANCY 💀</h2>
+    
+    <div class="cards-container">
+        <!-- Signature Spell -->
+        <div class="spell-card necromancy">
+            <div class="card-header">
+                <div class="spell-number signature">★ SIGNATURE</div>
+                <div class="spell-name">The Dwellers Below</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Necromancy</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">7+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Beneath the enemy the cold dirt parts, revealing spectral hands that reach to grasp at the foe and pull them into the underworld.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Place 3" template over engaged unit, scatters D3+1". Enemy models hit suffer <strong>1 S3 hit, AP -</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 1 -->
+        <div class="spell-card necromancy">
+            <div class="card-header">
+                <div class="spell-number">1</div>
+                <div class="spell-name">Deathly Cabal</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Necromancy</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Self</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    From beyond the veil of death, unquiet spirits gather protectively around the Necromancer.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, caster and unit gain <strong>6+ Ward vs non-magical attacks</strong> and <strong>Fear</strong> (or Terror if already have Fear).
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 2 -->
+        <div class="spell-card necromancy">
+            <div class="card-header">
+                <div class="spell-number">2</div>
+                <div class="spell-name">Unquiet Spirits</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Necromancy</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Evil spirits gather around the enemy, their spectral talons creeping beneath armour to tear at flesh.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Target suffers <strong>3D6 Strength 2 hits</strong>, with <strong>no armour save</strong> (Ward/Regen allowed).
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 3 -->
+        <div class="spell-card necromancy">
+            <div class="card-header">
+                <div class="spell-number">3</div>
+                <div class="spell-name">Spiritual Vortex</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Necromancy</span>
+                    <span class="spell-type">Magical Vortex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">11+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Necromancer gestures and dark energy swirls, opening a vortex into the realm of Morr, god of death.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Place 5" template (doesn't move). Dangerous terrain. Enemies within 8": <strong>-1 Ld</strong> (min 2), no Inspiring Presence.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 4 -->
+        <div class="spell-card necromancy">
+            <div class="card-header">
+                <div class="spell-number">4</div>
+                <div class="spell-name">Curse of Years</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Necromancy</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    As dead things draw near, they feed hungrily upon the vital energy of the living, ageing them rapidly.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, target suffers <strong>-1 Movement</strong>, <strong>-1 WS</strong>, <strong>-1 Toughness</strong> (min 1). Replaces previous Hex.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 5 -->
+        <div class="spell-card necromancy">
+            <div class="card-header">
+                <div class="spell-number">5</div>
+                <div class="spell-name">Spectral Steed</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Necromancy</span>
+                    <span class="spell-type">Conveyance</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">12"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    As the Necromancer chants words of dark power, a ghostly steed forms from the night air.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Target friendly infantry character gains <strong>Ethereal</strong> and <strong>Fly (10)</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 6 -->
+        <div class="spell-card necromancy">
+            <div class="card-header">
+                <div class="spell-number">6</div>
+                <div class="spell-name">Spirit Leech</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Necromancy</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">18"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Chill winds gust and long shadows gather, sapping the enemy's will and sowing seeds of dread.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until end of turn, target suffers <strong>-2 Leadership</strong> (min 2) and <strong>cannot use Inspiring Presence</strong>. May target units in combat.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== WAAAGH! MAGIC ==================== -->
+    <h2 class="lore-title" style="border-color: #228B22; color: #32CD32;">💚 WAAAGH! MAGIC 💚</h2>
+    
+    <div class="cards-container">
+        <!-- Signature Spell -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number signature">★ SIGNATURE</div>
+                <div class="spell-name">Fist of Gork (or Mork)</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Waaagh! Magic</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    In response to the Shaman's frantic hopping and gesticulating, a great green fist materialises from the air and wallops the foe!
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Place large (5") template over engaged unit, scatters D3+1". Models (friend or foe) hit suffer <strong>1 S4 hit, AP -1</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 1 -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number">1</div>
+                <div class="spell-name">Vindictive Glare</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Waaagh! Magic</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">21"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Their brows furrowed and their teeth clenched, the Shaman's glare is so intense that their enemies visibly wither.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Target suffers <strong>1 Strength 7 hit</strong> with <strong>Multiple Wounds (D3)</strong>, <strong>no armour save</strong> (Ward/Regen allowed). May target units in combat.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 2 -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number">2</div>
+                <div class="spell-name">Hand of Mork (or Gork)</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Waaagh! Magic</span>
+                    <span class="spell-type">Conveyance</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">7+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">18"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    A huge green hand appears from above and, with great care, flicks a hero across the battlefield.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Target friendly character (may be in combat). Move within <strong>2D6" of original spot</strong>, not within 3" of enemies. If double 1: <strong>lose 1 Wound</strong>. <em>Allows leaving combat!</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 3 -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number">3</div>
+                <div class="spell-name">Bad Moon Rizin'</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Waaagh! Magic</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Shaman summons a great pale moon above the battlefield. Trembling under its baleful gaze, the enemy can barely lift their weapons!
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until end of turn, target enemy unit suffers <strong>-D3 WS</strong> and <strong>-D3 Initiative</strong> (min 1).
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 4 -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number">4</div>
+                <div class="spell-name">Evil Sun Shinin'</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Waaagh! Magic</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Self</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The sun is out and there's an enemy army over there— it's a great day for a battle! 'Ave at it Boyz!
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, friendly units within caster's <strong>Command range</strong> may <strong>re-roll To Hit of natural 1</strong> and <strong>improve AP by 1</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 5 -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number">5</div>
+                <div class="spell-name">'Ere We Go!</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Waaagh! Magic</span>
+                    <span class="spell-type">Enchantment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Self</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Shaman begins a simple chant which is quickly and enthusiastically taken up by their friends.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Friendly units within Command range during Declare Charges: <strong>+3" max charge range</strong> and <strong>+D3 to Charge roll</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spell 6 -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number">6</div>
+                <div class="spell-name">Foot of Gork (or Mork)</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Waaagh! Magic</span>
+                    <span class="spell-type">Magical Vortex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    There's a massive green foot on the battlefield and it seems to be moving!
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Place 5" template within 15". Counts as <strong>dangerous terrain</strong>. Moves <strong>2D6" randomly</strong> each Start of Turn. Units touched suffer <strong>D3+3 S5 hits, AP -1</strong>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== LORE OF GORK ==================== -->
+    <h2 class="lore-title" style="border-color: #228B22; color: #32CD32;">💪 LORE OF GORK 💪</h2>
+    <p class="intro-text" style="margin-bottom: 20px;">
+        Orc Shamans only. May discard a spell to select one of these instead of the Waaagh! Magic signature spell.
+    </p>
+    
+    <div class="cards-container">
+        <!-- Brain Bursta -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number signature">GORK</div>
+                <div class="spell-name">Brain Bursta</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Lore of Gork</span>
+                    <span class="spell-type">Assailment</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">Combat</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Channelling the violence of their peers, the Shaman projects it against their enemies in a brain-bursting wave.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> A single enemy <strong>model</strong> in combat suffers <strong>1 S6 hit</strong> with <strong>Multiple Wounds (D3)</strong>. <strong>No armour or Regen saves</strong> (Ward allowed).
+                </div>
+            </div>
+        </div>
+
+        <!-- Gaze of Gork -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number signature">GORK</div>
+                <div class="spell-name">Gaze of Gork</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Lore of Gork</span>
+                    <span class="spell-type">Magic Missile</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">5D6"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    Gork gives the Shaman the ability to project beams of coruscating energy from their eyes, burning massive holes through everything they look at.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Draw a <strong>5D6" line</strong> from caster's base. Any model (friend or foe) under the line suffers <strong>1 S5 hit, AP -3</strong>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== LORE OF MORK ==================== -->
+    <h2 class="lore-title" style="border-color: #228B22; color: #32CD32;">🧠 LORE OF MORK 🧠</h2>
+    <p class="intro-text" style="margin-bottom: 20px;">
+        Goblin Shamans only. May discard a spell to select one of these instead of the Waaagh! Magic signature spell.
+    </p>
+    
+    <div class="cards-container">
+        <!-- Mork's Curse -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number signature">MORK</div>
+                <div class="spell-name">Mork's Curse</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Lore of Mork</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">8+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">18"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Shaman points a bony finger at the enemy and utters a curse. Almost immediately, buckles begin to break and rivets pop, causing armour plates to slip.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> <em>Remains in Play.</em> Target enemy unit must <strong>re-roll Armour Save rolls of natural 6</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Itchy Nuisance -->
+        <div class="spell-card waaagh-magic">
+            <div class="card-header">
+                <div class="spell-number signature">MORK</div>
+                <div class="spell-name">Itchy Nuisance</div>
+            </div>
+            <div class="image-slot">[ Inserisci Immagine ]</div>
+            <div class="card-body">
+                <div>
+                    <span class="lore-tag">Lore of Mork</span>
+                    <span class="spell-type">Hex</span>
+                </div>
+                <div class="spell-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Casting Value</div>
+                        <div class="stat-value">9+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Range</div>
+                        <div class="stat-value">15"</div>
+                    </div>
+                </div>
+                <div class="spell-description">
+                    The Shaman begins vigorously scratching and cackling maniacally, their antics causing their enemies to feel uncomfortably hot and itchy.
+                </div>
+                <div class="spell-effect">
+                    <strong>Effetto:</strong> Until next Start of Turn, target enemy unit suffers <strong>-D3 Toughness</strong> and <strong>-D3 Initiative</strong> (min 1).
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+
+
